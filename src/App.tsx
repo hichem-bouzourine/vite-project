@@ -6,10 +6,9 @@ const App = () => {
   const [messages, setMessages] = useState<any>([]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
   const [typingDisplay, setTypingDisplay] = useState<string>("");
-  const [connectedRoom, setConnectedRoom] = useState<number>();
 
-  const [id_conversation, setId_conversation] = useState<number>(1);
-  const [id_destinateur, setId_destinateur] = useState<number>(7);
+  const [id_conversation, setId_conversation] = useState<number>();
+  const [id_destinateur, setId_destinateur] = useState<number>(8);
 
   useEffect(() => {
     const socket = io("http://localhost:3000");
@@ -19,8 +18,8 @@ const App = () => {
       socket.emit(
         "joinRoom",
         {
-          id_conversation,
-          id_destinateur,
+          id_user1: 8,
+          id_user2: 10,
         },
         (res: any) => {
           setMessages(res);
@@ -39,7 +38,7 @@ const App = () => {
       });
 
       socket.on("connectedRoom", (roomName: number) => {
-        setConnectedRoom(roomName);
+        setId_conversation(roomName);
         console.log(`Connected to room: ${roomName}`);
       });
     });
@@ -54,7 +53,11 @@ const App = () => {
 
     socket.emit(
       "sendMessage",
-      { id_conversation, id_destinateur, message: currentMessage },
+      {
+        id_conversation: Number(id_conversation),
+        id_destinateur,
+        message: currentMessage,
+      },
       (res: any) => {
         setCurrentMessage("");
       }
@@ -96,7 +99,7 @@ const App = () => {
               <button type="submit">Send</button>
             </form>
           </div>
-          <p>connected room:{connectedRoom}</p>
+          <p>connected room:{id_conversation}</p>
         </div>
       )}
     </div>
